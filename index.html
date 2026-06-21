@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Rotina Kids 👶</title>
+
+  <link rel="apple-touch-icon" sizes="512x512" href="apple-touch-icon.png">
+  <link rel="shortcut icon" href="apple-touch-icon.png">
+
+  <meta property="og:type"        content="website">
+  <meta property="og:url"         content="https://tarcisiogb.github.io/rotina-kids/">
+  <meta property="og:title"       content="Rotina Kids 👶">
+  <meta property="og:description" content="Acompanhe o sono, saúde e rotina de Lucas e Clara — juntos, de qualquer dispositivo.">
+  <meta property="og:image"       content="https://tarcisiogb.github.io/rotina-kids/og-image.png">
+  <meta property="og:image:width"  content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card"        content="summary_large_image">
+  <meta name="twitter:title"       content="Rotina Kids 👶">
+  <meta name="twitter:description" content="Acompanhe o sono, saúde e rotina de Lucas e Clara — juntos, de qualquer dispositivo.">
+  <meta name="twitter:image"       content="https://tarcisiogb.github.io/rotina-kids/og-image.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#F5F3EE;--card:#FFFFFF;--green:#2D6A4F;--green-l:#52B788;--green-x:#D8F3DC;
+      --amber:#E76F28;--amber-l:#FFF0E6;--red:#C0392B;--red-l:#FDE8E8;
+      --blue:#1A6B9A;--blue-l:#E8F4FD;--purple:#6B3FA0;--purple-l:#F0E8FF;
+      --lucas:#1A6B9A;--lucas-l:#E8F4FD;--clara:#6B3FA0;--clara-l:#F0E8FF;
+      --txt:#1A1A1A;--muted:#666;--border:#E2DFD9;--yellow-l:#FFFBEA;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;font-size:15px;background:var(--bg);color:var(--txt);padding-bottom:88px;}
+    h1,h2,h3{font-family:'DM Serif Display',serif;font-weight:400;}
+    #loginScreen{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;background:var(--green);}
+    .login-box{background:#fff;border-radius:20px;padding:32px 24px;max-width:340px;width:100%;text-align:center;}
+    .login-box h1{font-size:26px;color:var(--green);margin-bottom:6px;}
+    .login-box p{font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.5;}
+    .btn-google{display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:13px 20px;font-size:14px;font-weight:600;cursor:pointer;width:100%;font-family:inherit;}
+    .topbar{background:var(--green);color:#fff;padding:14px 16px 12px;position:sticky;top:0;z-index:200;}
+    .topbar-row{display:flex;align-items:center;justify-content:space-between;}
+    .topbar h1{font-size:19px;}
+    .topbar-sub{font-size:12px;opacity:.7;margin-top:1px;}
+    .btn-signout{background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
+    .tabs{display:flex;background:#fff;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;position:sticky;top:64px;z-index:190;}
+    .tabs::-webkit-scrollbar{display:none;}
+    .tab{padding:11px 14px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;flex-shrink:0;transition:all .18s;}
+    .tab.on{color:var(--green);border-bottom-color:var(--green);}
+    .sec{display:none;padding:14px;}
+    .sec.on{display:block;}
+    .card{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:14px;margin-bottom:10px;}
+    .card-title{font-family:'DM Serif Display',serif;font-size:17px;margin-bottom:4px;}
+    .card-sub{font-size:12px;color:var(--muted);margin-bottom:10px;}
+    input,select,textarea{font-family:inherit;font-size:13px;border:1.5px solid var(--border);border-radius:8px;padding:9px 12px;width:100%;color:var(--txt);background:#fff;}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green-l);}
+    label{font-size:12px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px;margin-top:12px;}
+    label:first-child{margin-top:0;}
+    .btn{display:flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:10px;padding:10px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;width:100%;}
+    .btn:disabled{opacity:.6;cursor:not-allowed;}
+    .btn-primary{background:var(--green);color:#fff;}
+    .btn-amber{background:var(--amber);color:#fff;}
+    .btn-outline{background:#fff;border:1.5px solid var(--border);color:var(--txt);}
+    .btn-sm{padding:6px 12px;font-size:12px;width:auto;}
+    .spin{display:inline-block;animation:spin 1s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .sono-quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+    .sono-card{border-radius:14px;padding:16px;cursor:pointer;border:2px solid transparent;text-align:center;transition:all .2s;}
+    .sono-card-moon{background:var(--blue-l);border-color:#C2D9ED;}
+    .sono-card-moon:hover{border-color:var(--blue);}
+    .sono-card-sun{background:var(--amber-l);border-color:#FDDCBF;}
+    .sono-card-sun:hover{border-color:var(--amber);}
+    .sono-card-icon{font-size:28px;margin-bottom:6px;}
+    .sono-card-label{font-size:13px;font-weight:600;color:var(--txt);}
+    .sono-card-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+    .child-pick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+    .child-btn{border:2px solid var(--border);border-radius:10px;padding:10px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;background:#fff;color:var(--muted);transition:all .2s;}
+    .child-btn.lucas.on{background:var(--lucas-l);border-color:var(--lucas);color:var(--lucas);}
+    .child-btn.clara.on{background:var(--clara-l);border-color:var(--clara);color:var(--clara);}
+    .open-sleep{border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+    .open-sleep-lucas{background:var(--lucas-l);color:var(--lucas);}
+    .open-sleep-clara{background:var(--clara-l);color:var(--clara);}
+    .badge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;}
+    .badge-ok{background:var(--green-x);color:#1B4332;}
+    .badge-warn{background:var(--yellow-l);color:#7A5800;}
+    .badge-err{background:var(--red-l);color:var(--red);}
+    .badge-lucas{background:var(--lucas-l);color:var(--lucas);}
+    .badge-clara{background:var(--clara-l);color:var(--clara);}
+    .badge-int{background:#FFF0E6;color:#7A3800;}
+    .comp-legend{display:flex;gap:12px;margin-bottom:8px;font-size:11px;font-weight:600;}
+    .comp-legend span{display:flex;align-items:center;gap:4px;}
+    .comp-legend .dot{width:10px;height:10px;border-radius:50%;}
+    .comp-days{display:flex;gap:4px;align-items:flex-end;height:90px;}
+    .comp-day{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;}
+    .comp-bars{display:flex;gap:2px;align-items:flex-end;width:100%;height:72px;}
+    .comp-bar{flex:1;border-radius:3px 3px 0 0;min-height:3px;transition:height .4s;}
+    .comp-bar-lucas{background:var(--lucas);}
+    .comp-bar-clara{background:var(--clara);}
+    .comp-bar-empty{background:#EAE7E1;}
+    .comp-daylabel{font-size:9px;color:var(--muted);text-align:center;margin-top:2px;}
+    .stats-comp{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+    .stat-comp{background:var(--card);border-radius:12px;border:1px solid var(--border);padding:12px;}
+    .stat-comp-header{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+    .stat-comp-header.lucas{color:var(--lucas);}
+    .stat-comp-header.clara{color:var(--clara);}
+    .stat-n{font-family:'DM Serif Display',serif;font-size:30px;line-height:1;}
+    .stat-n-lucas{color:var(--lucas);}
+    .stat-n-clara{color:var(--clara);}
+    .stat-d{font-size:11px;color:var(--muted);margin-top:2px;}
+    .tl-item{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start;}
+    .tl-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;margin-top:2px;}
+    .tl-dot-lucas-sleep{background:var(--lucas-l);}
+    .tl-dot-clara-sleep{background:var(--clara-l);}
+    .tl-dot-sick{background:var(--red-l);}
+    .tl-content{flex:1;}
+    .tl-title{font-size:13px;font-weight:600;}
+    .tl-date{font-size:11px;color:var(--muted);}
+    .tl-body{font-size:12px;color:var(--muted);margin-top:2px;line-height:1.5;}
+    .med-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+    .med-item:last-child{border-bottom:none;}
+    .med-icon{width:30px;height:30px;background:var(--amber-l);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+    .med-info{flex:1;}
+    .med-name{font-size:13px;font-weight:600;}
+    .med-detail{font-size:11px;color:var(--muted);}
+    .btn-del{background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:4px;}
+    .sick-card{border-left:3px solid var(--red);}
+    .ciclo-item{font-size:12px;color:var(--muted);padding:3px 0;display:flex;align-items:center;gap:6px;}
+    .ciclo-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);flex-shrink:0;}
+    .sec-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:18px 0 8px;}
+    .sec-label:first-child{margin-top:2px;}
+    .row{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+    .ai-box{background:var(--purple-l);border:1px solid #D4C0F0;border-radius:12px;padding:14px;}
+    .ai-box h3{font-size:15px;color:var(--purple);margin-bottom:8px;}
+    .ai-box p{font-size:13px;line-height:1.6;color:#3D2060;}
+    .ai-date{font-size:11px;color:var(--purple);opacity:.7;margin-top:6px;}
+    .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 18px;border-radius:20px;font-size:13px;z-index:999;opacity:0;pointer-events:none;transition:opacity .3s;white-space:nowrap;}
+    .toast.show{opacity:1;}
+    .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:flex-end;}
+    .modal-bg.open{display:flex;}
+    .modal{background:#fff;border-radius:20px 20px 0 0;padding:20px;width:100%;max-height:92vh;overflow-y:auto;}
+    .modal-title{font-family:'DM Serif Display',serif;font-size:19px;margin-bottom:16px;}
+    .modal-close{float:right;background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted);}
+    .empty{text-align:center;padding:28px 16px;color:var(--muted);}
+    .empty-icon{font-size:32px;margin-bottom:6px;}
+    .empty p{font-size:13px;}
+    .time-now{font-size:28px;font-family:'DM Serif Display',serif;color:var(--green);text-align:center;padding:8px 0;}
+    .time-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:12px;}
+    .info-box{background:var(--green-x);border-radius:10px;padding:10px 14px;font-size:12px;color:#1B4332;margin-bottom:10px;}
+  </style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <div class="login-box">
+    <h1>Rotina Kids 👶</h1>
+    <p>Acompanhe o sono, saúde e rotina de Lucas e Clara.</p>
+    <button class="btn-google" onclick="loginGoogle()">
+      <img src="https://www.google.com/favicon.ico" style="width:20px;height:20px;" alt="">
+      Entrar com Google
+    </button>
+  </div>
+</div>
+
+<div id="appScreen" style="display:none;">
+  <div class="topbar">
+    <div class="topbar-row">
+      <div><h1>Rotina Kids 👶</h1><div class="topbar-sub" id="topbarSub">—</div></div>
+      <button class="btn-signout" onclick="signOut()">Sair</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" onclick="tab('sono',this)">😴 Sono</div>
+    <div class="tab"    onclick="tab('saude',this)">🏥 Saúde</div>
+    <div class="tab"    onclick="tab('comparativo',this)">📊 Comparativo</div>
+    <div class="tab"    onclick="tab('historico',this)">📋 Histórico</div>
+    <div class="tab"    onclick="tab('resumo',this)">✨ Resumo IA</div>
+  </div>
+
+  <!-- SONO -->
+  <div id="sec-sono" class="sec on">
+    <div id="open-sleep-alerts"></div>
+    <div class="sec-label">Registrar agora</div>
+    <div class="sono-quick">
+      <div class="sono-card sono-card-moon" onclick="abrirModalSono('dormiu')">
+        <div class="sono-card-icon">🌙</div>
+        <div class="sono-card-label">Dormiu</div>
+        <div class="sono-card-sub">Registrar hora de dormir</div>
+      </div>
+      <div class="sono-card sono-card-sun" onclick="abrirModalSono('acordou')">
+        <div class="sono-card-icon">☀️</div>
+        <div class="sono-card-label">Acordou</div>
+        <div class="sono-card-sub">Registrar hora de acordar</div>
+      </div>
+    </div>
+    <div class="sec-label">Últimas noites</div>
+    <div id="list-sono-lucas" style="margin-bottom:6px;"></div>
+    <div id="list-sono-clara"></div>
+  </div>
+
+  <!-- SAÚDE -->
+  <div id="sec-saude" class="sec">
+    <div class="sec-label">Registrar episódio</div>
+    <div class="card">
+      <div class="child-pick">
+        <button class="child-btn lucas" id="saude-btn-lucas" onclick="selectSaudeChild('lucas')">👦 Lucas</button>
+        <button class="child-btn clara"  id="saude-btn-clara"  onclick="selectSaudeChild('clara')">👧 Clara</button>
+      </div>
+      <label>Data de início</label>
+      <input type="date" id="inp-doenca-inicio">
+      <label>Data de fim <span style="font-weight:400;color:var(--muted)">(deixe vazio se ainda está doente)</span></label>
+      <input type="date" id="inp-doenca-fim">
+      <label>Condição / Sintomas</label>
+      <input type="text" id="inp-doenca-cond" placeholder="Ex: gripe, febre 38.5°C, tosse...">
+      <label>Observações <span style="font-weight:400">(opcional)</span></label>
+      <textarea id="inp-doenca-obs" rows="2" placeholder="Como está se sentindo, comportamento..."></textarea>
+      <div style="margin-top:12px;">
+        <button class="btn btn-outline btn-sm" style="width:auto;" onclick="abrirModalRemedio()">+ Adicionar remédio</button>
+      </div>
+      <div id="remedios-preview" style="margin-top:8px;"></div>
+      <div style="margin-top:12px;">
+        <button class="btn btn-amber" onclick="registrarDoenca()">💾 Salvar episódio</button>
+      </div>
+    </div>
+    <div class="sec-label">Episódios — Lucas</div>
+    <div id="list-doencas-lucas"></div>
+    <div class="sec-label">Episódios — Clara</div>
+    <div id="list-doencas-clara"></div>
+  </div>
+
+  <!-- COMPARATIVO -->
+  <div id="sec-comparativo" class="sec">
+    <div class="sec-label">Sono — últimos 7 dias</div>
+    <div class="card">
+      <div class="comp-legend">
+        <span><div class="dot" style="background:var(--lucas);"></div> Lucas</span>
+        <span><div class="dot" style="background:var(--clara);"></div> Clara</span>
+      </div>
+      <div class="comp-days" id="chart-comp-sono"></div>
+    </div>
+    <div class="sec-label">Médias de sono</div>
+    <div class="stats-comp">
+      <div class="stat-comp">
+        <div class="stat-comp-header lucas">👦 Lucas</div>
+        <div class="stat-n stat-n-lucas" id="stat-media-lucas">—</div>
+        <div class="stat-d">média horas/noite</div>
+        <div style="margin-top:8px;">
+          <div class="stat-n stat-n-lucas" id="stat-noites-lucas" style="font-size:20px;">—</div>
+          <div class="stat-d">noites registradas</div>
+        </div>
+      </div>
+      <div class="stat-comp">
+        <div class="stat-comp-header clara">👧 Clara</div>
+        <div class="stat-n stat-n-clara" id="stat-media-clara">—</div>
+        <div class="stat-d">média horas/noite</div>
+        <div style="margin-top:8px;">
+          <div class="stat-n stat-n-clara" id="stat-noites-clara" style="font-size:20px;">—</div>
+          <div class="stat-d">noites registradas</div>
+        </div>
+      </div>
+    </div>
+    <div class="sec-label">Saúde — comparativo</div>
+    <div class="stats-comp">
+      <div class="stat-comp">
+        <div class="stat-comp-header lucas">👦 Lucas</div>
+        <div class="stat-n stat-n-lucas" id="stat-doencas-lucas">—</div>
+        <div class="stat-d">episódios de saúde</div>
+        <div style="margin-top:8px;">
+          <div class="stat-n stat-n-lucas" id="stat-remedios-lucas" style="font-size:20px;">—</div>
+          <div class="stat-d">remédios registrados</div>
+        </div>
+      </div>
+      <div class="stat-comp">
+        <div class="stat-comp-header clara">👧 Clara</div>
+        <div class="stat-n stat-n-clara" id="stat-doencas-clara">—</div>
+        <div class="stat-d">episódios de saúde</div>
+        <div style="margin-top:8px;">
+          <div class="stat-n stat-n-clara" id="stat-remedios-clara" style="font-size:20px;">—</div>
+          <div class="stat-d">remédios registrados</div>
+        </div>
+      </div>
+    </div>
+    <div class="sec-label">Horário médio de dormir e acordar</div>
+    <div class="card" id="card-horarios"></div>
+    <div class="sec-label">Perfil das crianças</div>
+    <div class="stats-comp" id="card-perfil"></div>
+  </div>
+
+  <!-- HISTÓRICO -->
+  <div id="sec-historico" class="sec">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+      <button class="btn btn-sm btn-outline on-filter" onclick="setFiltro('todos',this)">Todos</button>
+      <button class="btn btn-sm btn-outline" onclick="setFiltro('lucas',this)">👦 Lucas</button>
+      <button class="btn btn-sm btn-outline" onclick="setFiltro('clara',this)">👧 Clara</button>
+      <button class="btn btn-sm btn-outline" onclick="setFiltro('sono',this)">😴 Sono</button>
+      <button class="btn btn-sm btn-outline" onclick="setFiltro('saude',this)">🏥 Saúde</button>
+    </div>
+    <div id="timeline-historico"></div>
+  </div>
+
+  <!-- RESUMO IA -->
+  <div id="sec-resumo" class="sec">
+    <div class="card">
+      <div class="card-title">✨ Resumo semanal com IA</div>
+      <div class="card-sub">Análise comparativa dos padrões de sono e saúde de Lucas e Clara.</div>
+      <button class="btn btn-primary" id="btn-resumo" onclick="gerarResumo()">Gerar resumo desta semana</button>
+    </div>
+    <div id="resumo-content" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<!-- MODAL SONO -->
+<div class="modal-bg" id="modal-sono">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modal-sono')">✕</button>
+    <div class="modal-title" id="modal-sono-title">🌙 Dormiu agora</div>
+    <div class="time-now" id="modal-time-display">00:00</div>
+    <div class="time-sub" id="modal-time-sub"></div>
+    <div class="child-pick">
+      <button class="child-btn lucas" id="sono-btn-lucas" onclick="selectSonoChild('lucas')">👦 Lucas</button>
+      <button class="child-btn clara"  id="sono-btn-clara"  onclick="selectSonoChild('clara')">👧 Clara</button>
+    </div>
+    <label>Hora <span style="font-weight:400">(pré-preenchida com agora)</span></label>
+    <input type="datetime-local" id="inp-sono-hora">
+    <label>Observação <span style="font-weight:400">(opcional)</span></label>
+    <textarea id="inp-sono-obs" rows="2" placeholder="Ex: dormiu agitado, acordou no meio da noite..."></textarea>
+    <div id="sono-modal-aviso" style="margin-top:10px;display:none;"></div>
+    <div style="margin-top:16px;">
+      <button class="btn btn-primary" onclick="confirmarSono()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL REMEDIO -->
+<div class="modal-bg" id="modal-remedio">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modal-remedio')">✕</button>
+    <div class="modal-title">💊 Adicionar Remédio</div>
+    <label>Nome do remédio</label>
+    <input type="text" id="inp-med-nome" placeholder="Ex: Ibuprofeno, Dipirona...">
+    <label>Dose</label>
+    <input type="text" id="inp-med-dose" placeholder="Ex: 5ml, 1 comprimido...">
+    <label>Horário da dose</label>
+    <input type="time" id="inp-med-hora">
+    <label>Duração do tratamento</label>
+    <input type="text" id="inp-med-duracao" placeholder="Ex: 3 dias, 5 dias...">
+    <div style="margin-top:16px;">
+      <button class="btn btn-primary" onclick="adicionarRemedio()">Adicionar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- FIREBASE -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as fbSignOut, onAuthStateChanged }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { getFirestore, doc, onSnapshot, setDoc }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBk1-7n7rw_i4Cl1Osjd8gwLmaovzr6zQc",
+    authDomain: "rotina-kids-4f221.firebaseapp.com",
+    projectId: "rotina-kids-4f221",
+    storageBucket: "rotina-kids-4f221.firebasestorage.app",
+    messagingSenderId: "734286080832",
+    appId: "1:734286080832:web:96be6442aeb2665b5968a5"
+  };
+  window.FUNCTION_URL = "https://gerarresumo-liez2rj5ta-rj.a.run.app";
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  window.loginGoogle = async () => {
+    try { await signInWithPopup(auth, provider); }
+    catch(e) { showToast("Erro ao entrar: " + e.message); }
+  };
+  window.signOut = async () => {
+    await fbSignOut(auth);
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('appScreen').style.display  = 'none';
+  };
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('appScreen').style.display  = 'none';
+      return;
+    }
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appScreen').style.display  = 'block';
+    document.getElementById('topbarSub').textContent = user.displayName || user.email;
+    window._fbUser = user;
+
+    const ref = doc(db, 'familias', 'rotina-kids', 'dados', 'estado');
+    onSnapshot(ref, (snap) => {
+      window.ST = snap.exists() ? snap.data() : {};
+      // ── Compatibilidade retroativa + dados fixos das crianças ──
+      window.ST.lucas = window.ST.lucas || {};
+      window.ST.lucas.sono    = window.ST.lucas.sono    || [];
+      window.ST.lucas.doencas = window.ST.lucas.doencas || [];
+      window.ST.lucas.nome    = 'Lucas';
+      window.ST.lucas.sexo    = 'masculino';
+      window.ST.lucas.nascimento = '2020-11-06';
+      window.ST.clara = window.ST.clara || {};
+      window.ST.clara.sono    = window.ST.clara.sono    || [];
+      window.ST.clara.doencas = window.ST.clara.doencas || [];
+      window.ST.clara.nome    = 'Clara';
+      window.ST.clara.sexo    = 'feminino';
+      window.ST.clara.nascimento = '2023-11-03';
+      renderAll();
+    });
+
+    window.saveState = async () => {
+      const ref = doc(db, 'familias', 'rotina-kids', 'dados', 'estado');
+      await setDoc(ref, window.ST, { merge: true });
+    };
+  });
+</script>
+
+<script>
+window.ST = {};
+window._sonoTipo  = 'dormiu';
+window._sonoChild = null;
+window._saudeChild = 'lucas';
+window._filtroHistorico = 'todos';
+window._remediosPendentes = [];
+window._clockInterval = null;
+
+// ── PERFIL ────────────────────────────────────────────
+// Calcula idade em anos e meses a partir de data de nascimento
+function calcIdade(nascStr) {
+  if (!nascStr) return '—';
+  const nasc = new Date(nascStr + 'T12:00');
+  const hoje = new Date();
+  let anos  = hoje.getFullYear() - nasc.getFullYear();
+  let meses = hoje.getMonth()    - nasc.getMonth();
+  if (meses < 0) { anos--; meses += 12; }
+  if (anos === 0) return `${meses} ${meses === 1 ? 'mês' : 'meses'}`;
+  if (meses === 0) return `${anos} ${anos === 1 ? 'ano' : 'anos'}`;
+  return `${anos}a ${meses}m`;
+}
+
+// ── NAV ───────────────────────────────────────────────
+function tab(id, el) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.getElementById('sec-' + id).classList.add('on');
+  el.classList.add('on');
+}
+function setFiltro(f, el) {
+  window._filtroHistorico = f;
+  document.querySelectorAll('.on-filter').forEach(b => b.classList.remove('on-filter'));
+  el.classList.add('on-filter');
+  renderHistorico();
+}
+
+// ── RENDER ALL ────────────────────────────────────────
+function renderAll() {
+  renderOpenSleepAlerts();
+  renderListSono();
+  renderDoencas();
+  renderComparativo();
+  renderHistorico();
+  renderResumoCache();
+}
+
+// ── SONO — ESTRUTURA DE NOITE ─────────────────────────
+// Cada noite é um objeto: { id, data, ciclos:[{dormiu,acordou}], duracaoTotal, interrompida, obs }
+// Retrocompatibilidade: registros antigos com dormiu/acordou direto são tratados como ciclo único
+
+function getNorma(r) {
+  // Retorna objeto normalizado independente do formato antigo ou novo
+  if (r.ciclos) return r; // novo formato
+  // formato antigo: converte na hora de ler (sem salvar)
+  return {
+    id: r.id,
+    data: r.dormiu ? r.dormiu.slice(0,10) : (r.acordou ? r.acordou.slice(0,10) : null),
+    ciclos: [{ dormiu: r.dormiu || null, acordou: r.acordou || null }],
+    duracaoTotal: r.duracaoH || null,
+    interrompida: false,
+    obs: r.obs || ''
+  };
+}
+
+function calcH(de, ate) {
+  if (!de || !ate) return 0;
+  return Math.max(0, Math.round(((new Date(ate) - new Date(de)) / 3600000) * 10) / 10);
+}
+
+function duracaoNorma(r) {
+  const n = getNorma(r);
+  if (n.duracaoTotal) return n.duracaoTotal;
+  return n.ciclos.reduce((sum, c) => sum + calcH(c.dormiu, c.acordou), 0);
+}
+
+// Detecta ciclo aberto (dormiu sem acordou) — suporta ambos os formatos
+function getOpenSleep(child) {
+  const sono = window.ST[child]?.sono || [];
+  // Primeiro checa novo formato
+  for (const r of sono) {
+    if (r.ciclos) {
+      const ultimo = r.ciclos[r.ciclos.length - 1];
+      if (ultimo.dormiu && !ultimo.acordou) return { registro: r, cicloIdx: r.ciclos.length - 1 };
+    } else {
+      // formato antigo
+      if (r.dormiu && !r.acordou) return { registro: r, cicloIdx: 0, antigo: true };
+    }
+  }
+  return null;
+}
+
+// ── SONO — ALERTS ─────────────────────────────────────
+function renderOpenSleepAlerts() {
+  const el = document.getElementById('open-sleep-alerts');
+  let html = '';
+  ['lucas','clara'].forEach(child => {
+    const open = getOpenSleep(child);
+    if (open) {
+      const nome = child === 'lucas' ? 'Lucas' : 'Clara';
+      const ciclo = open.registro.ciclos
+        ? open.registro.ciclos[open.cicloIdx]
+        : open.registro;
+      html += `<div class="open-sleep open-sleep-${child}">
+        🌙 <b>${nome}</b> dormiu às ${fmtTime(ciclo.dormiu)} — aguardando acordar
+      </div>`;
+    }
+  });
+  el.innerHTML = html;
+}
+
+// ── SONO — MODAL ──────────────────────────────────────
+function abrirModalSono(tipo) {
+  window._sonoTipo  = tipo;
+  window._sonoChild = null;
+  document.getElementById('modal-sono-title').textContent = tipo === 'dormiu' ? '🌙 Dormiu agora' : '☀️ Acordou agora';
+  document.getElementById('inp-sono-hora').value = localISOString();
+  document.getElementById('inp-sono-obs').value  = '';
+  document.getElementById('sono-modal-aviso').style.display = 'none';
+  document.getElementById('sono-btn-lucas').classList.remove('on');
+  document.getElementById('sono-btn-clara').classList.remove('on');
+
+  if (tipo === 'acordou') {
+    const lOpen = getOpenSleep('lucas');
+    const cOpen = getOpenSleep('clara');
+    if (lOpen && !cOpen) selectSonoChild('lucas');
+    else if (cOpen && !lOpen) selectSonoChild('clara');
+  }
+
+  clearInterval(window._clockInterval);
+  atualizarRelogio();
+  window._clockInterval = setInterval(atualizarRelogio, 10000);
+  document.getElementById('modal-sono').classList.add('open');
+}
+
+function atualizarRelogio() {
+  const now = new Date();
+  document.getElementById('modal-time-display').textContent =
+    now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('modal-time-sub').textContent =
+    now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+}
+
+function selectSonoChild(child) {
+  window._sonoChild = child;
+  document.getElementById('sono-btn-lucas').classList.toggle('on', child === 'lucas');
+  document.getElementById('sono-btn-clara').classList.toggle('on', child === 'clara');
+
+  const aviso = document.getElementById('sono-modal-aviso');
+  if (window._sonoTipo === 'acordou') {
+    const open = getOpenSleep(child);
+    const nome = child === 'lucas' ? 'Lucas' : 'Clara';
+    if (!open) {
+      aviso.innerHTML = `<div style="background:var(--yellow-l);border-radius:8px;padding:10px;font-size:12px;color:#7A5800;">⚠️ Sem ciclo aberto para ${nome}. Será registrado como acordar avulso.</div>`;
+    } else {
+      const ciclo = open.registro.ciclos ? open.registro.ciclos[open.cicloIdx] : open.registro;
+      const nciclos = open.registro.ciclos ? open.registro.ciclos.length : 1;
+      aviso.innerHTML = `<div style="background:var(--green-x);border-radius:8px;padding:10px;font-size:12px;color:#1B4332;">✓ Encerrando ciclo ${nciclos} — dormiu às ${fmtTime(ciclo.dormiu)}</div>`;
+    }
+    aviso.style.display = 'block';
+  } else {
+    // dormiu — verifica se há ciclo aberto (seria novo despertar na mesma noite)
+    const open = getOpenSleep(child);
+    const aviso = document.getElementById('sono-modal-aviso');
+    if (open) {
+      const nome = child === 'lucas' ? 'Lucas' : 'Clara';
+      aviso.innerHTML = `<div style="background:var(--blue-l);border-radius:8px;padding:10px;font-size:12px;color:var(--blue);">ℹ️ ${nome} ainda tem ciclo em aberto. Este será adicionado como novo ciclo na mesma noite.</div>`;
+      aviso.style.display = 'block';
+    }
+  }
+}
+
+function confirmarSono() {
+  if (!window._sonoChild) { showToast('Selecione Lucas ou Clara'); return; }
+  const hora = document.getElementById('inp-sono-hora').value;
+  const obs  = document.getElementById('inp-sono-obs').value.trim();
+  if (!hora) { showToast('Informe o horário'); return; }
+
+  const child = window.ST[window._sonoChild];
+  child.sono  = child.sono || [];
+  const nome  = window._sonoChild === 'lucas' ? 'Lucas' : 'Clara';
+
+  if (window._sonoTipo === 'dormiu') {
+    const open = getOpenSleep(window._sonoChild);
+    if (open && !open.antigo && open.registro.ciclos) {
+      // Adiciona novo ciclo na mesma noite
+      open.registro.ciclos.push({ dormiu: hora, acordou: null });
+      open.registro.interrompida = true;
+    } else {
+      // Nova noite — novo registro com novo formato
+      child.sono.unshift({
+        id: Date.now(),
+        data: hora.slice(0,10),
+        ciclos: [{ dormiu: hora, acordou: null }],
+        duracaoTotal: null,
+        interrompida: false,
+        obs: obs
+      });
+    }
+    showToast('🌙 ' + nome + ' dormiu registrado!');
+  } else {
+    const open = getOpenSleep(window._sonoChild);
+    if (open) {
+      if (open.antigo) {
+        // formato antigo — atualiza diretamente
+        open.registro.acordou  = hora;
+        open.registro.duracaoH = calcH(open.registro.dormiu, hora);
+        if (obs) open.registro.obs = (open.registro.obs ? open.registro.obs + ' | ' : '') + obs;
+      } else {
+        // novo formato — fecha o ciclo
+        open.registro.ciclos[open.cicloIdx].acordou = hora;
+        // Recalcula duração total da noite
+        const total = open.registro.ciclos.reduce((sum, c) => sum + calcH(c.dormiu, c.acordou), 0);
+        open.registro.duracaoTotal = Math.round(total * 10) / 10;
+        if (obs) open.registro.obs = (open.registro.obs ? open.registro.obs + ' | ' : '') + obs;
+      }
+    } else {
+      // Sem ciclo aberto — salva avulso no formato novo
+      child.sono.unshift({
+        id: Date.now(),
+        data: hora.slice(0,10),
+        ciclos: [{ dormiu: null, acordou: hora }],
+        duracaoTotal: null,
+        interrompida: false,
+        obs: obs
+      });
+    }
+    showToast('☀️ ' + nome + ' acordou registrado!');
+  }
+
+  window.saveState();
+  fecharModal('modal-sono');
+}
+
+// ── SONO — LIST ───────────────────────────────────────
+function renderListSono() {
+  renderListSonoChild('lucas');
+  renderListSonoChild('clara');
+}
+
+function renderListSonoChild(child) {
+  const nome  = child === 'lucas' ? '👦 Lucas' : '👧 Clara';
+  // Ordena do mais recente para mais antigo
+  const sono  = [...(window.ST[child]?.sono || [])]
+    .sort((a,b) => {
+      const da = (a.ciclos ? a.ciclos[0]?.dormiu : a.dormiu) || '';
+      const db2 = (b.ciclos ? b.ciclos[0]?.dormiu : b.dormiu) || '';
+      return db2.localeCompare(da);
+    })
+    .slice(0, 10);
+  const el = document.getElementById('list-sono-' + child);
+
+  if (!sono.length) {
+    el.innerHTML = `<div class="card"><div class="badge badge-${child}" style="margin-bottom:8px;">${nome}</div><div class="empty" style="padding:12px 0;"><div class="empty-icon">😴</div><p>Nenhum registro ainda.</p></div></div>`;
+    return;
+  }
+
+  el.innerHTML = `<div class="card"><div class="badge badge-${child}" style="margin-bottom:10px;">${nome}</div>` +
+    sono.map(r => {
+      const n = getNorma(r);
+      const dur = duracaoNorma(r);
+      const emAberto = n.ciclos.some(c => c.dormiu && !c.acordou);
+      const durBadge = emAberto
+        ? `<span class="badge" style="background:#EEE;color:var(--muted);">em aberto</span>`
+        : dur
+          ? `<span class="badge ${dur>=10?'badge-ok':dur>=7?'badge-warn':'badge-err'}">${dur}h${n.interrompida?' 🔄':''}</span>`
+          : '';
+      const ciclosHTML = n.ciclos.length > 1
+        ? n.ciclos.map((c,i) => `<div class="ciclo-item"><div class="ciclo-dot"></div>Ciclo ${i+1}: ${c.dormiu?'🌙 '+fmtTime(c.dormiu):'?'}${c.acordou?' → ☀️ '+fmtTime(c.acordou):'→ em aberto'}</div>`).join('')
+        : `<div style="font-size:13px;">${n.ciclos[0]?.dormiu?'🌙 Dormiu: <b>'+fmtDT(n.ciclos[0].dormiu)+'</b>':''}</div>
+           <div style="font-size:13px;">${n.ciclos[0]?.acordou?'☀️ Acordou: <b>'+fmtDT(n.ciclos[0].acordou)+'</b>':'<span style="color:var(--muted);font-size:12px;">☀️ Aguardando acordar…</span>'}</div>`;
+      return `<div style="display:flex;align-items:flex-start;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+        <div style="flex:1;">
+          ${n.ciclos.length > 1 ? `<div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:4px;">📅 ${fmtDate(n.data)} · ${n.ciclos.length} ciclos</div>` : ''}
+          ${ciclosHTML}
+          ${n.obs ? `<div style="font-size:11px;color:var(--muted);margin-top:3px;">${n.obs}</div>` : ''}
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;margin-left:8px;">
+          ${durBadge}
+          <button class="btn-del" onclick="deletarSono('${child}',${r.id})">🗑</button>
+        </div>
+      </div>`;
+    }).join('') + '</div>';
+}
+
+function deletarSono(child, id) {
+  window.ST[child].sono = window.ST[child].sono.filter(r => r.id !== id);
+  window.saveState().then(() => showToast('Registro removido'));
+}
+
+// ── SAÚDE ─────────────────────────────────────────────
+function selectSaudeChild(child) {
+  window._saudeChild = child;
+  document.getElementById('saude-btn-lucas').classList.toggle('on', child === 'lucas');
+  document.getElementById('saude-btn-clara').classList.toggle('on', child === 'clara');
+}
+
+function abrirModalRemedio() {
+  document.getElementById('modal-remedio').classList.add('open');
+  ['inp-med-nome','inp-med-dose','inp-med-hora','inp-med-duracao'].forEach(id => document.getElementById(id).value = '');
+}
+
+function adicionarRemedio() {
+  const nome    = document.getElementById('inp-med-nome').value.trim();
+  const dose    = document.getElementById('inp-med-dose').value.trim();
+  const hora    = document.getElementById('inp-med-hora').value;
+  const duracao = document.getElementById('inp-med-duracao').value.trim();
+  if (!nome) { showToast('Informe o nome do remédio'); return; }
+  window._remediosPendentes.push({ nome, dose, hora, duracao });
+  fecharModal('modal-remedio');
+  renderRemediosPendentes();
+}
+
+function renderRemediosPendentes() {
+  const el = document.getElementById('remedios-preview');
+  el.innerHTML = window._remediosPendentes.map((m,i) => `
+    <div class="med-item">
+      <div class="med-icon">💊</div>
+      <div class="med-info"><div class="med-name">${m.nome}</div><div class="med-detail">${[m.dose,m.hora,m.duracao].filter(Boolean).join(' · ')}</div></div>
+      <button class="btn-del" onclick="removerRemedioTemp(${i})">✕</button>
+    </div>`).join('');
+}
+
+function removerRemedioTemp(i) { window._remediosPendentes.splice(i,1); renderRemediosPendentes(); }
+
+function registrarDoenca() {
+  if (!window._saudeChild) { showToast('Selecione Lucas ou Clara'); return; }
+  const inicio = document.getElementById('inp-doenca-inicio').value;
+  const fim    = document.getElementById('inp-doenca-fim').value;
+  const cond   = document.getElementById('inp-doenca-cond').value.trim();
+  const obs    = document.getElementById('inp-doenca-obs').value.trim();
+  if (!inicio || !cond) { showToast('Preencha a data e a condição'); return; }
+  const child = window.ST[window._saudeChild];
+  child.doencas = child.doencas || [];
+  child.doencas.push({ id: Date.now(), inicio, fim: fim||null, cond, obs, remedios: [...window._remediosPendentes] });
+  window.saveState().then(() => {
+    showToast('✓ Episódio salvo!');
+    ['inp-doenca-inicio','inp-doenca-fim','inp-doenca-cond','inp-doenca-obs'].forEach(id => document.getElementById(id).value = '');
+    window._remediosPendentes = [];
+    renderRemediosPendentes();
+    selectSaudeChild(window._saudeChild);
+  });
+}
+
+function renderDoencas() {
+  renderDoencasChild('lucas');
+  renderDoencasChild('clara');
+}
+
+function renderDoencasChild(child) {
+  const nome = child === 'lucas' ? '👦 Lucas' : '👧 Clara';
+  // Ordena do mais recente para mais antigo
+  const regs = [...(window.ST[child]?.doencas || [])]
+    .sort((a,b) => (b.inicio||'').localeCompare(a.inicio||''))
+    .slice(0,10);
+  const el = document.getElementById('list-doencas-' + child);
+  if (!regs.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">✅</div><p>${nome} sem episódios registrados.</p></div>`;
+    return;
+  }
+  el.innerHTML = regs.map(r => `
+    <div class="card sick-card">
+      <div class="row" style="margin-bottom:8px;">
+        <div><span class="badge badge-${child}">${nome}</span> <span class="badge ${r.fim?'badge-ok':'badge-err'}" style="margin-left:4px;">${r.fim?'Recuperado':'Em curso'}</span></div>
+        <button class="btn-del" onclick="deletarDoenca('${child}',${r.id})">🗑</button>
+      </div>
+      <div style="font-size:14px;font-family:'DM Serif Display',serif;">${r.cond}</div>
+      <div style="font-size:12px;color:var(--muted);margin:4px 0 8px;">📅 ${fmtDate(r.inicio)}${r.fim?' → '+fmtDate(r.fim):' (sem data de fim)'}</div>
+      ${r.obs?`<div style="font-size:12px;color:var(--muted);margin-bottom:8px;">${r.obs}</div>`:''}
+      ${r.remedios?.length?r.remedios.map(m=>`
+        <div class="med-item"><div class="med-icon">💊</div>
+        <div class="med-info"><div class="med-name">${m.nome}</div><div class="med-detail">${[m.dose,m.hora,m.duracao].filter(Boolean).join(' · ')}</div></div></div>`).join(''):''}
+    </div>`).join('');
+}
+
+function deletarDoenca(child, id) {
+  window.ST[child].doencas = window.ST[child].doencas.filter(r => r.id !== id);
+  window.saveState().then(() => showToast('Registro removido'));
+}
+
+// ── COMPARATIVO ───────────────────────────────────────
+function renderComparativo() {
+  const dias  = ultimos7dias();
+  const lSono = window.ST.lucas?.sono || [];
+  const cSono = window.ST.clara?.sono || [];
+  const maxH  = 12;
+
+  document.getElementById('chart-comp-sono').innerHTML = dias.map(d => {
+    const lR  = lSono.find(r => (getNorma(r).data || '').startsWith(d.key) && duracaoNorma(r));
+    const cR  = cSono.find(r => (getNorma(r).data || '').startsWith(d.key) && duracaoNorma(r));
+    const lH  = lR ? duracaoNorma(lR) : 0;
+    const cH  = cR ? duracaoNorma(cR) : 0;
+    return `<div class="comp-day">
+      <div class="comp-bars">
+        <div class="comp-bar ${lH>0?'comp-bar-lucas':'comp-bar-empty'}" style="height:${Math.min(100,(lH/maxH)*100)}%;"></div>
+        <div class="comp-bar ${cH>0?'comp-bar-clara':'comp-bar-empty'}" style="height:${Math.min(100,(cH/maxH)*100)}%;"></div>
+      </div>
+      <div class="comp-daylabel">${d.label}</div>
+    </div>`;
+  }).join('');
+
+  const lCompl = lSono.filter(r => duracaoNorma(r) > 0);
+  const cCompl = cSono.filter(r => duracaoNorma(r) > 0);
+  const lMedia = lCompl.length ? (lCompl.reduce((a,r)=>a+duracaoNorma(r),0)/lCompl.length).toFixed(1) : '—';
+  const cMedia = cCompl.length ? (cCompl.reduce((a,r)=>a+duracaoNorma(r),0)/cCompl.length).toFixed(1) : '—';
+
+  document.getElementById('stat-media-lucas').textContent  = lMedia !== '—' ? lMedia+'h' : '—';
+  document.getElementById('stat-media-clara').textContent  = cMedia !== '—' ? cMedia+'h' : '—';
+  document.getElementById('stat-noites-lucas').textContent = lCompl.length;
+  document.getElementById('stat-noites-clara').textContent = cCompl.length;
+
+  const lDoencas = window.ST.lucas?.doencas || [];
+  const cDoencas = window.ST.clara?.doencas || [];
+  document.getElementById('stat-doencas-lucas').textContent  = lDoencas.length;
+  document.getElementById('stat-doencas-clara').textContent  = cDoencas.length;
+  document.getElementById('stat-remedios-lucas').textContent = lDoencas.reduce((a,d)=>a+(d.remedios?.length||0),0);
+  document.getElementById('stat-remedios-clara').textContent = cDoencas.reduce((a,d)=>a+(d.remedios?.length||0),0);
+
+  // Horários médios — usando primeiro ciclo de cada noite
+  function mediaHorario(sono, campo) {
+    const vals = sono.filter(r=>{
+      const n=getNorma(r); const c=n.ciclos[0]; return c&&c[campo];
+    }).map(r=>{ const d=new Date(getNorma(r).ciclos[0][campo]); return d.getHours()*60+d.getMinutes(); });
+    return vals.length ? minToTime(Math.round(vals.reduce((a,b)=>a+b,0)/vals.length)) : '—';
+  }
+
+  document.getElementById('card-horarios').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--lucas);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">👦 Lucas</div>
+        <div style="font-size:12px;color:var(--muted);">🌙 Dorme em média</div>
+        <div style="font-size:20px;font-family:'DM Serif Display',serif;color:var(--lucas);">${mediaHorario(lSono,'dormiu')}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px;">☀️ Acorda em média</div>
+        <div style="font-size:20px;font-family:'DM Serif Display',serif;color:var(--lucas);">${mediaHorario(lCompl,'acordou')}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--clara);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;">👧 Clara</div>
+        <div style="font-size:12px;color:var(--muted);">🌙 Dorme em média</div>
+        <div style="font-size:20px;font-family:'DM Serif Display',serif;color:var(--clara);">${mediaHorario(cSono,'dormiu')}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:6px;">☀️ Acorda em média</div>
+        <div style="font-size:20px;font-family:'DM Serif Display',serif;color:var(--clara);">${mediaHorario(cCompl,'acordou')}</div>
+      </div>
+    </div>`;
+
+  // Perfil das crianças
+  document.getElementById('card-perfil').innerHTML = ['lucas','clara'].map(child => {
+    const c = window.ST[child];
+    const emoji = child === 'lucas' ? '👦' : '👧';
+    const cor = `var(--${child})`;
+    const corl = `var(--${child}-l)`;
+    return `<div class="stat-comp">
+      <div class="stat-comp-header ${child}">${emoji} ${c.nome}</div>
+      <div style="font-size:13px;color:var(--muted);">Nascimento</div>
+      <div style="font-size:15px;font-weight:600;color:${cor};">${fmtDate(c.nascimento)}</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:6px;">Idade</div>
+      <div style="font-size:15px;font-weight:600;color:${cor};">${calcIdade(c.nascimento)}</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:6px;">Sexo</div>
+      <div style="font-size:13px;font-weight:600;color:${cor};">${c.sexo === 'masculino' ? '♂ Masculino' : '♀ Feminino'}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── HISTÓRICO ─────────────────────────────────────────
+function renderHistorico() {
+  const f = window._filtroHistorico;
+  let items = [];
+
+  ['lucas','clara'].forEach(child => {
+    const nome = child === 'lucas' ? 'Lucas' : 'Clara';
+    if (f !== 'saude' && (f==='todos'||f===child||f==='sono')) {
+      (window.ST[child]?.sono||[]).forEach(r => {
+        const n   = getNorma(r);
+        const dur = duracaoNorma(r);
+        const emAberto = n.ciclos.some(c => c.dormiu && !c.acordou);
+        const primDormiu = n.ciclos[0]?.dormiu;
+        const ultAcordou = [...n.ciclos].reverse().find(c=>c.acordou)?.acordou;
+        items.push({
+          tipo:'sono', child,
+          data: primDormiu || n.data || '',
+          titulo: emAberto
+            ? `${nome} — sono em aberto`
+            : dur ? `${nome} — ${dur}h${n.interrompida?' (interrompida)':''}` : `${nome} — sono`,
+          detalhe: [
+            primDormiu  ? `🌙 ${fmtDT(primDormiu)}`  : '',
+            ultAcordou  ? `→ ☀️ ${fmtDT(ultAcordou)}` : emAberto ? '(aguardando acordar)' : '',
+            n.ciclos.length > 1 ? `${n.ciclos.length} ciclos` : '',
+            n.obs || ''
+          ].filter(Boolean).join('  ·  ')
+        });
+      });
+    }
+    if (f !== 'sono' && (f==='todos'||f===child||f==='saude')) {
+      (window.ST[child]?.doencas||[]).forEach(r => {
+        items.push({
+          tipo:'saude', child, data: r.inicio+'T00:00',
+          titulo: `${nome} — ${r.cond}`,
+          detalhe: `📅 ${fmtDate(r.inicio)}${r.fim?' → '+fmtDate(r.fim):''} · ${r.remedios?.length||0} remédio(s)`
+        });
+      });
+    }
+  });
+
+  // Ordena do mais recente para mais antigo
+  items.sort((a,b) => (b.data||'').localeCompare(a.data||''));
+
+  const el = document.getElementById('timeline-historico');
+  if (!items.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">📋</div><p>Nenhum registro encontrado.</p></div>`;
+    return;
+  }
+  el.innerHTML = items.slice(0,60).map(it => {
+    const dotClass = it.tipo==='sono' ? `tl-dot-${it.child}-sleep` : 'tl-dot-sick';
+    const icon = it.tipo==='sono' ? (it.child==='lucas'?'😴':'💤') : '🏥';
+    return `<div class="tl-item">
+      <div class="tl-dot ${dotClass}">${icon}</div>
+      <div class="tl-content">
+        <div class="tl-title">${it.titulo}</div>
+        <div class="tl-body">${it.detalhe}</div>
+        <div class="tl-date">${fmtDT(it.data)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── RESUMO IA ─────────────────────────────────────────
+async function gerarResumo() {
+  if (!window.FUNCTION_URL || window.FUNCTION_URL.includes('PASTE')) {
+    showToast('Configure o FUNCTION_URL'); return;
+  }
+  const btn = document.getElementById('btn-resumo');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spin">⟳</span> Gerando...';
+  try {
+    const token = await window._fbUser.getIdToken(true);
+    const payload = {
+      lucas: {
+        nome: 'Lucas', nascimento: '2020-11-06', sexo: 'masculino',
+        sono:    (window.ST.lucas?.sono||[]).slice(0,14).map(r=>getNorma(r)),
+        doencas: (window.ST.lucas?.doencas||[]).slice(0,10)
+      },
+      clara: {
+        nome: 'Clara', nascimento: '2023-11-03', sexo: 'feminino',
+        sono:    (window.ST.clara?.sono||[]).slice(0,14).map(r=>getNorma(r)),
+        doencas: (window.ST.clara?.doencas||[]).slice(0,10)
+      }
+    };
+    const res  = await fetch(window.FUNCTION_URL, {
+      method:'POST',
+      headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    window.ST['resumo_comparativo']      = data.resumo;
+    window.ST['resumo_comparativo_data'] = new Date().toISOString();
+    await window.saveState();
+    renderResumoCache();
+    showToast('✓ Resumo gerado!');
+  } catch(e) {
+    showToast('Erro ao gerar resumo.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Gerar resumo desta semana';
+  }
+}
+
+function renderResumoCache() {
+  const resumo = window.ST['resumo_comparativo'];
+  const data   = window.ST['resumo_comparativo_data'];
+  const el     = document.getElementById('resumo-content');
+  if (!resumo) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">✨</div><p>Clique em "Gerar resumo" para obter uma análise comparativa dos dois filhos.</p></div>`;
+    return;
+  }
+  el.innerHTML = `<div class="ai-box"><h3>✨ Análise — Lucas & Clara</h3><p>${resumo.replace(/\n/g,'<br>')}</p>${data?`<div class="ai-date">Gerado em ${fmtDT(data)}</div>`:''}</div>`;
+}
+
+// ── UTILS ─────────────────────────────────────────────
+function ultimos7dias() {
+  const dias = [];
+  for (let i=6;i>=0;i--) {
+    const d = new Date(); d.setDate(d.getDate()-i);
+    dias.push({key:d.toISOString().slice(0,10), label:d.toLocaleDateString('pt-BR',{weekday:'short'}).slice(0,3)});
+  }
+  return dias;
+}
+function localISOString() {
+  const n=new Date(), p=x=>String(x).padStart(2,'0');
+  return `${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())}T${p(n.getHours())}:${p(n.getMinutes())}`;
+}
+function fmtDT(s){if(!s)return'';try{const d=new Date(s);return d.toLocaleDateString('pt-BR')+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}catch{return s;}}
+function fmtDate(s){if(!s)return'';try{return new Date(s+'T12:00').toLocaleDateString('pt-BR');}catch{return s;}}
+function fmtTime(s){if(!s)return'';try{return new Date(s).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});}catch{return s;}}
+function minToTime(m){const h=Math.floor(((m%1440)+1440)%1440/60),mn=((m%1440)+1440)%1440%60;return String(h).padStart(2,'0')+':'+String(mn).padStart(2,'0');}
+function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2400);}
+function fecharModal(id){document.getElementById(id).classList.remove('open');if(id==='modal-sono')clearInterval(window._clockInterval);}
+document.querySelectorAll('.modal-bg').forEach(m=>{
+  m.addEventListener('click',e=>{if(e.target===m){m.classList.remove('open');clearInterval(window._clockInterval);}});
+});
+
+selectSaudeChild('lucas');
+</script>
+</body>
+</html>
