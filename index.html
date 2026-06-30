@@ -303,6 +303,9 @@
     <div class="sec-label">Quem vai nas interrupções noturnas</div>
     <div class="card" id="card-quem-interrup"></div>
 
+    <div class="sec-label">Quem foi acordar (todos os despertares)</div>
+    <div class="card" id="card-quem-acordou"></div>
+
     <div class="sec-label">Quem colocou para dormir</div>
     <div class="card" id="card-quem-dormiu"></div>
 
@@ -373,7 +376,7 @@
     <label>Hora <span style="font-weight:400">(pré-preenchida com agora)</span></label>
     <input type="datetime-local" id="inp-sono-hora">
     <div id="sono-quem-wrap" style="margin-top:12px;">
-      <label>Quem colocou para dormir <span style="font-weight:400">(opcional)</span></label>
+      <label id="sono-quem-label">Quem colocou para dormir <span style="font-weight:400">(opcional)</span></label>
       <div class="quem-pick">
         <button class="quem-btn" onclick="selectQuem('Aline',this)">🧑‍🦱 Aline</button>
         <button class="quem-btn" onclick="selectQuem('Tarcísio',this)">👨 Tarcísio</button>
@@ -398,13 +401,19 @@
     <input type="hidden" id="edit-sono-id">
     <label>Dormiu</label>
     <input type="datetime-local" id="edit-sono-dormiu">
-    <label>Acordou</label>
-    <input type="datetime-local" id="edit-sono-acordou">
     <label>Quem colocou para dormir</label>
     <div class="quem-pick" style="margin-top:6px;">
       <button class="quem-btn" id="edit-quem-Aline"    onclick="selectEditQuem('Aline',this)">🧑‍🦱 Aline</button>
       <button class="quem-btn" id="edit-quem-Tarcísio" onclick="selectEditQuem('Tarcísio',this)">👨 Tarcísio</button>
       <button class="quem-btn" id="edit-quem-Outro"    onclick="selectEditQuem('Outro',this)">👤 Outro</button>
+    </div>
+    <label style="margin-top:16px;">Acordou</label>
+    <input type="datetime-local" id="edit-sono-acordou">
+    <label>Quem foi acordar</label>
+    <div class="quem-pick" style="margin-top:6px;">
+      <button class="quem-btn" id="edit-quemA-Aline"    onclick="selectEditQuemAcordou('Aline',this)">🧑‍🦱 Aline</button>
+      <button class="quem-btn" id="edit-quemA-Tarcísio" onclick="selectEditQuemAcordou('Tarcísio',this)">👨 Tarcísio</button>
+      <button class="quem-btn" id="edit-quemA-Outro"    onclick="selectEditQuemAcordou('Outro',this)">👤 Outro</button>
     </div>
     <label>Observação</label>
     <textarea id="edit-sono-obs" rows="2"></textarea>
@@ -721,8 +730,11 @@ function abrirModalSono(tipo) {
   document.getElementById('sono-btn-lucas').classList.remove('on');
   document.getElementById('sono-btn-clara').classList.remove('on');
   document.querySelectorAll('.quem-btn').forEach(b=>b.classList.remove('on'));
-  // Mostrar campo "quem" sempre no dormiu (primeiro ciclo ou retorno)
-  document.getElementById('sono-quem-wrap').style.display = tipo==='dormiu'?'block':'none';
+  // Mostrar campo "quem" sempre (dormiu E acordou)
+  document.getElementById('sono-quem-wrap').style.display = 'block';
+  document.getElementById('sono-quem-label').innerHTML = tipo==='dormiu'
+    ? 'Quem colocou para dormir <span style="font-weight:400">(opcional)</span>'
+    : 'Quem foi acordar <span style="font-weight:400">(opcional)</span>';
 
   if (tipo==='acordou') {
     const lOpen=getOpenSleep('lucas'), cOpen=getOpenSleep('clara');
@@ -786,15 +798,12 @@ function confirmarSono() {
   const meta  = { registradoPor: window._userName || null };
 
   if (window._sonoTipo==='dormiu') {
-    // Verifica se pertence à noite em curso (regra: antes das 12h do dia seguinte ao início)
     const noiteEmCurso = getNoiteEmCurso(window._sonoChild, hora);
     if (noiteEmCurso) {
-      // Adiciona novo ciclo à noite existente, com quem individual
-      noiteEmCurso.ciclos.push({ dormiu:hora, acordou:null, quem:window._sonoQuem });
+      noiteEmCurso.ciclos.push({ dormiu:hora, acordou:null, quem:window._sonoQuem, quemAcordou:null });
       noiteEmCurso.interrompida = true;
     } else {
-      // Nova noite
-      child.sono.unshift({ id:Date.now(), data:hora.slice(0,10), ciclos:[{dormiu:hora,acordou:null,quem:window._sonoQuem}], duracaoTotal:null, interrompida:false, obs, ...meta });
+      child.sono.unshift({ id:Date.now(), data:hora.slice(0,10), ciclos:[{dormiu:hora,acordou:null,quem:window._sonoQuem,quemAcordou:null}], duracaoTotal:null, interrompida:false, obs, ...meta });
     }
     showToast('🌙 '+nome+' dormiu registrado!');
   } else {
@@ -803,16 +812,18 @@ function confirmarSono() {
       if (open.antigo) {
         open.registro.acordou  = hora;
         open.registro.duracaoH = calcH(open.registro.dormiu, hora);
+        open.registro.quemAcordou = window._sonoQuem;
         if (obs) open.registro.obs = (open.registro.obs?open.registro.obs+' | ':'')+obs;
       } else {
         open.registro.ciclos[open.cicloIdx].acordou = hora;
+        open.registro.ciclos[open.cicloIdx].quemAcordou = window._sonoQuem;
         const total = open.registro.ciclos.reduce((sum,c)=>sum+calcH(c.dormiu,c.acordou),0);
         open.registro.duracaoTotal = Math.round(total*10)/10;
         if (obs) open.registro.obs = (open.registro.obs?open.registro.obs+' | ':'')+obs;
         open.registro.registradoPor = window._userName || null;
       }
     } else {
-      child.sono.unshift({ id:Date.now(), data:hora.slice(0,10), ciclos:[{dormiu:null,acordou:hora}], duracaoTotal:null, interrompida:false, obs, ...meta });
+      child.sono.unshift({ id:Date.now(), data:hora.slice(0,10), ciclos:[{dormiu:null,acordou:hora,quem:null,quemAcordou:window._sonoQuem}], duracaoTotal:null, interrompida:false, obs, ...meta });
     }
     showToast('☀️ '+nome+' acordou registrado!');
   }
@@ -831,15 +842,22 @@ function editarSono(child, id) {
   document.getElementById('edit-sono-dormiu').value  = c0.dormiu  ? c0.dormiu.slice(0,16)  : '';
   document.getElementById('edit-sono-acordou').value = c0.acordou ? c0.acordou.slice(0,16) : '';
   document.getElementById('edit-sono-obs').value     = n.obs || '';
-  window._editQuem = n.quem || null;
-  document.querySelectorAll('#modal-edit-sono .quem-btn').forEach(b=>{
-    b.classList.toggle('on', b.dataset.quem===window._editQuem);
-  });
-  // Marcar botão correto
+  window._editQuem = c0.quem || null;
+  window._editQuemAcordou = c0.quemAcordou || null;
+  document.querySelectorAll('#modal-edit-sono .quem-btn').forEach(b=>b.classList.remove('on'));
   ['Aline','Tarcísio','Outro'].forEach(q=>{
-    document.getElementById('edit-quem-'+q)?.classList.toggle('on', q===window._editQuem);
+    const elD = document.getElementById('edit-quem-'+q);
+    if (elD) elD.classList.toggle('on', q===window._editQuem);
+    const elA = document.getElementById('edit-quemA-'+q);
+    if (elA) elA.classList.toggle('on', q===window._editQuemAcordou);
   });
   document.getElementById('modal-edit-sono').classList.add('open');
+}
+
+function selectEditQuemAcordou(quem, el) {
+  window._editQuemAcordou = window._editQuemAcordou===quem ? null : quem;
+  document.querySelectorAll('#modal-edit-sono [id^="edit-quemA-"]').forEach(b=>b.classList.remove('on'));
+  if (window._editQuemAcordou) el.classList.add('on');
 }
 
 function selectEditQuem(quem, el) {
@@ -860,16 +878,19 @@ function salvarEdicaoSono() {
   if (r.ciclos) {
     r.ciclos[0].dormiu  = dormiu  || null;
     r.ciclos[0].acordou = acordou || null;
+    r.ciclos[0].quem = window._editQuem;
+    r.ciclos[0].quemAcordou = window._editQuemAcordou;
     r.duracaoTotal = dormiu&&acordou ? Math.round(calcH(dormiu,acordou)*10)/10 : null;
     r.data = dormiu ? dormiu.slice(0,10) : (acordou ? acordou.slice(0,10) : r.data);
     r.obs  = obs;
-    r.quem = window._editQuem;
+    r.quem = window._editQuem; // mantém compatibilidade com leitura antiga
   } else {
     r.dormiu  = dormiu  || null;
     r.acordou = acordou || null;
     r.duracaoH= dormiu&&acordou ? Math.round(calcH(dormiu,acordou)*10)/10 : null;
     r.obs = obs;
     r.quem = window._editQuem;
+    r.quemAcordou = window._editQuemAcordou;
   }
   window.saveState().then(()=>showToast('✓ Registro atualizado!'));
   fecharModal('modal-edit-sono');
@@ -900,11 +921,12 @@ function renderListSonoChild(child) {
       const c0=n.ciclos[0];
       const ciclosHTML=n.ciclos.length>1
         ?n.ciclos.map((c,i)=>{
-          const quemCiclo=c.quem?`<span class="meta-tag" style="margin-left:4px;">👤 ${c.quem}</span>`:'';
-          return `<div class="ciclo-item"><div class="ciclo-dot"></div>Ciclo ${i+1}: ${c.dormiu?'🌙 '+fmtTime(c.dormiu):'?'}${c.acordou?' → ☀️ '+fmtTime(c.acordou):'→ em aberto'} ${c.dormiu&&c.acordou?'('+calcH(c.dormiu,c.acordou)+'h)':''}${quemCiclo}</div>`;
+          const quemDorm=c.quem?`<span class="meta-tag" style="margin-left:4px;">🌙👤 ${c.quem}</span>`:'';
+          const quemAcord=c.quemAcordou?`<span class="meta-tag" style="margin-left:4px;">☀️👤 ${c.quemAcordou}</span>`:'';
+          return `<div class="ciclo-item"><div class="ciclo-dot"></div>Ciclo ${i+1}: ${c.dormiu?'🌙 '+fmtTime(c.dormiu):'?'}${c.acordou?' → ☀️ '+fmtTime(c.acordou):'→ em aberto'} ${c.dormiu&&c.acordou?'('+calcH(c.dormiu,c.acordou)+'h)':''}${quemDorm}${quemAcord}</div>`;
         }).join('')
-        :`${c0?.dormiu?`<div style="font-size:13px;">🌙 Dormiu: <b>${fmtDT(c0.dormiu)}</b></div>`:''}
-         ${c0?.acordou?`<div style="font-size:13px;">☀️ Acordou: <b>${fmtDT(c0.acordou)}</b></div>`:'<div style="font-size:12px;color:var(--muted);">☀️ Aguardando acordar…</div>'}`;
+        :`${c0?.dormiu?`<div style="font-size:13px;">🌙 Dormiu: <b>${fmtDT(c0.dormiu)}</b>${c0.quem?` <span class="meta-tag">👤 ${c0.quem}</span>`:''}</div>`:''}
+         ${c0?.acordou?`<div style="font-size:13px;">☀️ Acordou: <b>${fmtDT(c0.acordou)}</b>${c0.quemAcordou?` <span class="meta-tag">👤 ${c0.quemAcordou}</span>`:''}</div>`:'<div style="font-size:12px;color:var(--muted);">☀️ Aguardando acordar…</div>'}`;
       const metaHTML=[
         n.quem?`👤 ${n.quem}`:'',
         n.registradoPor?`📱 ${n.registradoPor}`:''
@@ -1254,6 +1276,25 @@ function renderComparativo() {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
       <div><div style="font-size:11px;font-weight:600;color:var(--lucas);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">👦 Lucas</div>${barInterrup(lInt,'var(--lucas)')}</div>
       <div><div style="font-size:11px;font-weight:600;color:var(--clara);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">👧 Clara</div>${barInterrup(cInt,'var(--clara)')}</div>
+    </div>`;
+
+  // Quem foi acordar (TODOS os despertares: interrupções + acordar final)
+  function contarQuemAcordou(sono) {
+    var c = { Aline:0, 'Tarcísio':0, Outro:0, total:0 };
+    sono.forEach(function(r) {
+      var n = getNorma(r);
+      n.ciclos.forEach(function(ciclo) {
+        if (ciclo.quemAcordou) { c[ciclo.quemAcordou] = (c[ciclo.quemAcordou]||0)+1; c.total++; }
+      });
+    });
+    return c;
+  }
+  var lAcordou = contarQuemAcordou(lSono), cAcordou = contarQuemAcordou(cSono);
+  var elQuemAcordou = document.getElementById('card-quem-acordou');
+  if (elQuemAcordou) elQuemAcordou.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><div style="font-size:11px;font-weight:600;color:var(--lucas);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">👦 Lucas</div>${barInterrup(lAcordou,'var(--lucas)')}</div>
+      <div><div style="font-size:11px;font-weight:600;color:var(--clara);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;">👧 Clara</div>${barInterrup(cAcordou,'var(--clara)')}</div>
     </div>`;
 
   // Saúde
