@@ -749,7 +749,7 @@
 <!-- FIREBASE -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut as fbSignOut, onAuthStateChanged }
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as fbSignOut, onAuthStateChanged }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { getFirestore, doc, onSnapshot, setDoc }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -770,17 +770,15 @@
   const provider = new GoogleAuthProvider();
 
   window.loginGoogle = async () => {
-    // Safari/iOS bloqueia popup — usar redirect como fallback
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    if (isSafari) {
-      try { await signInWithRedirect(auth, provider); }
-      catch(e) { showToast("Erro ao entrar: " + e.message); }
-    } else {
-      try { await signInWithPopup(auth, provider); }
-      catch(e) {
-        // Fallback para redirect se popup falhar
-        try { await signInWithRedirect(auth, provider); }
-        catch(e2) { showToast("Erro ao entrar: " + e2.message); }
+    const erroEl = document.getElementById('login-erro');
+    if (erroEl) erroEl.style.display = 'none';
+    try {
+      await signInWithPopup(auth, provider);
+    } catch(e) {
+      console.error('Login error:', e.code, e.message);
+      if (erroEl) {
+        erroEl.style.display = 'block';
+        erroEl.textContent = 'Erro ao entrar: ' + (e.message || e.code);
       }
     }
   };
@@ -791,16 +789,6 @@
   };
 
   const EMAILS_AUTORIZADOS = ['tarcisiogb@gmail.com', 'aosantanna@gmail.com'];
-
-  // Capturar resultado do redirect (Safari)
-  try {
-    const result = await getRedirectResult(auth);
-    // resultado já é tratado pelo onAuthStateChanged abaixo
-  } catch(e) {
-    if (e.code !== 'auth/no-current-user') {
-      console.warn('Redirect result error:', e.message);
-    }
-  }
 
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
