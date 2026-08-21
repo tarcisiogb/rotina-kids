@@ -71,6 +71,16 @@
     .open-sleep{border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
     .open-sleep-lucas{background:var(--lucas-l);color:var(--lucas);}
     .open-sleep-clara{background:var(--clara-l);color:var(--clara);}
+    .alert-banner{border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+    .alert-saude{background:#FDE8E8;color:var(--red);}
+    .alert-tela{background:#FEF3C7;color:#92400E;}
+    .alert-tela-lucas{background:var(--lucas-l);color:var(--lucas);}
+    .alert-tela-clara{background:var(--clara-l);color:var(--clara);}
+    .alert-btn{border:none;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;background:rgba(0,0,0,0.1);color:inherit;}
+    .tela-start-card{background:var(--card);border-radius:14px;border:2px dashed var(--border);padding:20px;text-align:center;margin-bottom:10px;cursor:pointer;}
+    .tela-start-icon{font-size:32px;margin-bottom:8px;}
+    .tela-start-label{font-size:14px;font-weight:600;color:var(--txt);}
+    .tela-start-sub{font-size:12px;color:var(--muted);margin-top:2px;}
     .badge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px;}
     .badge-ok{background:var(--green-x);color:#1B4332;}
     .badge-warn{background:var(--yellow-l);color:#7A5800;}
@@ -228,6 +238,9 @@
     </div>
   </div>
 
+  <!-- Alertas globais: saúde em aberto + tela em andamento -->
+  <div id="alertas-globais" style="padding:8px 14px 0;"></div>
+
   <div class="tabs">
     <div class="tab on" onclick="tab('sono',this)">😴 Sono</div>
     <div class="tab"    onclick="tab('saude',this)">🏥 Saúde</div>
@@ -305,55 +318,15 @@
 
   <!-- TELA -->
   <div id="sec-tela" class="sec">
-    <div class="sec-label">Registrar sessão de tela</div>
-    <div class="card">
-      <div class="child-pick">
-        <button class="child-btn lucas" id="tela-btn-lucas" onclick="selectTelaChild('lucas')">👦 Lucas</button>
-        <button class="child-btn clara"  id="tela-btn-clara"  onclick="selectTelaChild('clara')">👧 Clara</button>
-      </div>
 
-      <label>Dispositivo</label>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;" id="tela-devices">
-        <button class="tela-pill" onclick="selectTelaDevice('TV',this)">📺 TV</button>
-        <button class="tela-pill" onclick="selectTelaDevice('Tablet',this)">📲 Tablet</button>
-        <button class="tela-pill" onclick="selectTelaDevice('Celular',this)">📱 Celular</button>
-      </div>
+    <!-- Sessões em andamento -->
+    <div id="tela-sessoes-abertas"></div>
 
-      <label>Atividade</label>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;" id="tela-atividades">
-        <button class="tela-pill" onclick="selectTelaAtividade('Assistir desenho',this)">🎨 Desenho</button>
-        <button class="tela-pill" onclick="selectTelaAtividade('Assistir outro conteúdo',this)">🎬 Outro conteúdo</button>
-        <button class="tela-pill" onclick="selectTelaAtividade('Ver fotos e vídeos',this)">📷 Fotos e vídeos</button>
-        <button class="tela-pill" onclick="selectTelaAtividade('Outro',this)">➕ Outro</button>
-      </div>
-      <div id="tela-outro-campo" style="display:none;margin-top:8px;">
-        <input type="text" id="inp-tela-outro" placeholder="Descreva a atividade...">
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;width:100%;overflow:hidden;">
-        <div style="min-width:0;">
-          <label>Início</label>
-          <input type="datetime-local" id="inp-tela-inicio" style="font-size:11px;padding:8px 6px;">
-        </div>
-        <div style="min-width:0;">
-          <label>Fim</label>
-          <input type="datetime-local" id="inp-tela-fim" style="font-size:11px;padding:8px 6px;">
-        </div>
-      </div>
-
-      <label>Quem deixou na tela <span style="font-weight:400">(opcional)</span></label>
-      <div style="display:flex;gap:6px;margin-top:6px;" id="tela-quem-btns">
-        <button class="tela-pill" onclick="selectTelaQuem('Aline',this)">🧑‍🦱 Aline</button>
-        <button class="tela-pill" onclick="selectTelaQuem('Tarcísio',this)">👨 Tarcísio</button>
-        <button class="tela-pill" onclick="selectTelaQuem('Outro',this)">👤 Outro</button>
-      </div>
-
-      <label>Observação <span style="font-weight:400">(opcional)</span></label>
-      <textarea id="inp-tela-obs" rows="2" placeholder="Ex: ficou bem quietinho, pediu mais..."></textarea>
-
-      <div style="margin-top:12px;">
-        <button class="btn btn-primary" style="background:#D97706;" onclick="registrarTela()">💾 Salvar sessão</button>
-      </div>
+    <!-- Botão iniciar nova sessão -->
+    <div class="tela-start-card" onclick="abrirModalIniciarTela()">
+      <div class="tela-start-icon">📱</div>
+      <div class="tela-start-label">▶ Iniciar sessão de tela</div>
+      <div class="tela-start-sub">Toque para registrar início agora</div>
     </div>
 
     <div class="sec-label">Registros recentes — Lucas</div>
@@ -725,6 +698,73 @@
   </div>
 </div>
 
+<!-- MODAL INICIAR TELA -->
+<div class="modal-bg" id="modal-iniciar-tela">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modal-iniciar-tela')">✕</button>
+    <div class="modal-title">📱 Iniciar sessão de tela</div>
+
+    <label>Quem vai assistir</label>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:6px;">
+      <button class="child-btn lucas" id="it-btn-lucas" onclick="selectITChild('lucas')">👦 Lucas</button>
+      <button class="child-btn clara"  id="it-btn-clara"  onclick="selectITChild('clara')">👧 Clara</button>
+      <button class="child-btn" id="it-btn-ambos" onclick="selectITChild('ambos')" style="font-size:12px;">👦👧 Ambos</button>
+    </div>
+
+    <label>Dispositivo</label>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;" id="it-devices">
+      <button class="tela-pill" onclick="selectITDevice('TV',this)">📺 TV</button>
+      <button class="tela-pill" onclick="selectITDevice('Tablet',this)">📲 Tablet</button>
+      <button class="tela-pill" onclick="selectITDevice('Celular',this)">📱 Celular</button>
+    </div>
+
+    <label>Quem deixou <span style="font-weight:400">(opcional)</span></label>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;" id="it-quem-btns">
+      <button class="tela-pill" onclick="selectITQuem('Aline',this)">🧑‍🦱 Aline</button>
+      <button class="tela-pill" onclick="selectITQuem('Tarcísio',this)">👨 Tarcísio</button>
+      <button class="tela-pill" onclick="selectITQuem('Outro',this)">👤 Outro</button>
+    </div>
+
+    <label>Horário de início <span style="font-weight:400">(pré-preenchido com agora)</span></label>
+    <input type="datetime-local" id="it-inicio">
+
+    <div style="margin-top:16px;">
+      <button class="btn btn-primary" style="background:#D97706;" onclick="confirmarIniciarTela()">▶ Iniciar agora</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ENCERRAR TELA -->
+<div class="modal-bg" id="modal-encerrar-tela">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModal('modal-encerrar-tela')">✕</button>
+    <div class="modal-title" id="encerrar-tela-title">⏹ Encerrar sessão</div>
+    <input type="hidden" id="encerrar-sessao-id">
+    <input type="hidden" id="encerrar-child">
+
+    <label>Horário de fim <span style="font-weight:400">(pré-preenchido com agora)</span></label>
+    <input type="datetime-local" id="et-fim">
+
+    <label>Atividade</label>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;" id="et-atividades">
+      <button class="tela-pill" onclick="selectETAtividade('Assistir desenho',this)">🎨 Desenho</button>
+      <button class="tela-pill" onclick="selectETAtividade('Assistir outro conteúdo',this)">🎬 Outro conteúdo</button>
+      <button class="tela-pill" onclick="selectETAtividade('Ver fotos e vídeos',this)">📷 Fotos e vídeos</button>
+      <button class="tela-pill" onclick="selectETAtividade('Outro',this)">➕ Outro</button>
+    </div>
+    <div id="et-outro-campo" style="display:none;margin-top:6px;">
+      <input type="text" id="et-outro" placeholder="Descreva...">
+    </div>
+
+    <label>Observação <span style="font-weight:400">(opcional)</span></label>
+    <textarea id="et-obs" rows="2" placeholder="Ex: ficou bem quietinho..."></textarea>
+
+    <div style="margin-top:16px;">
+      <button class="btn btn-primary" style="background:#D97706;" onclick="confirmarEncerrarTela()">⏹ Encerrar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL REMEDIO -->
 <div class="modal-bg" id="modal-remedio">
   <div class="modal">
@@ -822,6 +862,7 @@
       window.ST.lucas.nome = 'Lucas'; window.ST.lucas.sexo = 'masculino'; window.ST.lucas.nascimento = '2020-11-06';
       window.ST.lucas.tela        = window.ST.lucas.tela        || [];
       window.ST.lucas.crescimento  = window.ST.lucas.crescimento  || [];
+      window.ST.telaAberta         = window.ST.telaAberta         || [];
       window.ST.clara = window.ST.clara || {};
       window.ST.clara.sono    = window.ST.clara.sono    || [];
       window.ST.clara.doencas = window.ST.clara.doencas || [];
@@ -991,11 +1032,53 @@ function setPeriodo(p, el) {
 }
 
 // ── RENDER ALL ────────────────────────────────────────
+function renderAlertasGlobais() {
+  var el = document.getElementById('alertas-globais');
+  if(!el) return;
+  var html = '';
+
+  // Saúde em aberto
+  ['lucas','clara'].forEach(function(child) {
+    var nome = child==='lucas'?'Lucas':'Clara';
+    var doencas = window.ST[child]?.doencas || [];
+    var abertas = doencas.filter(function(d){return !d.fim;});
+    abertas.forEach(function(d) {
+      var tipo = d.tipo || d.cond || 'Episódio';
+      var inicio = d.inicio ? new Date(d.inicio+'T12:00') : null;
+      var dias = inicio ? Math.round((new Date()-inicio)/86400000) : 0;
+      html += '<div class="alert-banner alert-saude">' +
+        '<div style="flex:1;font-size:13px;">🏥 <b>'+nome+'</b> — '+tipo+' · há '+dias+' dia'+(dias!==1?'s':'')+'</div>' +
+        '<button class="alert-btn" data-child="'+child+'" data-id="'+d.id+'" onclick="encerrarDoencaAlertBtn(this)">Encerrar</button>' +
+        '</div>';
+    });
+  });
+
+  // Tela em andamento
+  var sessoes = window.ST.telaAberta || [];
+  sessoes.forEach(function(s) {
+    var deviceEmoji = s.device==='TV'?'📺':s.device==='Tablet'?'📲':'📱';
+    ['lucas','clara'].forEach(function(child) {
+      if(s[child] && !s[child].fim) {
+        var nome = child==='lucas'?'Lucas':'Clara';
+        var dur = Math.round((new Date()-new Date(s[child].inicio))/60000);
+        html += '<div class="alert-banner alert-tela">' +
+          '<div style="flex:1;font-size:13px;">'+deviceEmoji+' <b>'+nome+'</b> · '+dur+'min em andamento</div>' +
+          '<button class="alert-btn" data-sid="'+s.id+'" data-child="'+child+'" onclick="encerrarTelaAlertBtn(this)">Encerrar</button>' +
+          '</div>';
+      }
+    });
+  });
+
+  el.innerHTML = html;
+}
+
 function renderAll() {
   renderOpenSleepAlerts();
   renderListSono();
   renderDoencas();
   renderTela();
+  renderSessoesAbertas();
+  renderAlertasGlobais();
   renderComparativo();
   renderTelaComparativo();
   renderEvolucaoDoencas();
@@ -1007,10 +1090,221 @@ function renderAll() {
 }
 
 // ── TELA ──────────────────────────────────────────────
+// ── SISTEMA DE TELA ──────────────────────────────────
 window._telaChild    = 'lucas';
 window._telaDevice   = null;
 window._telaAtividade = null;
 window._telaQuem     = null;
+
+// Modal iniciar tela
+window._itChild  = null;
+window._itDevice = null;
+window._itQuem   = null;
+
+// Modal encerrar tela
+window._etAtividade = null;
+
+function localISOStringNow() {
+  var n=new Date(), p=function(x){return String(x).padStart(2,'0');};
+  return n.getFullYear()+'-'+p(n.getMonth()+1)+'-'+p(n.getDate())+'T'+p(n.getHours())+':'+p(n.getMinutes());
+}
+
+function abrirModalIniciarTela() {
+  window._itChild = null; window._itDevice = null; window._itQuem = null;
+  document.getElementById('it-inicio').value = localISOStringNow();
+  document.querySelectorAll('#it-devices .tela-pill, #it-quem-btns .tela-pill').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('it-btn-lucas').classList.remove('on');
+  document.getElementById('it-btn-clara').classList.remove('on');
+  document.getElementById('it-btn-ambos').classList.remove('on');
+  document.getElementById('modal-iniciar-tela').classList.add('open');
+}
+
+function selectITChild(child) {
+  window._itChild = child;
+  ['lucas','clara','ambos'].forEach(function(c){
+    var el = document.getElementById('it-btn-'+c);
+    if(el) el.classList.toggle('on', c===child);
+  });
+}
+function selectITDevice(d, el) {
+  window._itDevice = window._itDevice===d?null:d;
+  document.querySelectorAll('#it-devices .tela-pill').forEach(function(b){b.classList.remove('on');});
+  if(window._itDevice) el.classList.add('on');
+}
+function selectITQuem(q, el) {
+  window._itQuem = window._itQuem===q?null:q;
+  document.querySelectorAll('#it-quem-btns .tela-pill').forEach(function(b){b.classList.remove('on');});
+  if(window._itQuem) el.classList.add('on');
+}
+
+function confirmarIniciarTela() {
+  if(!window._itChild) { showToast('Selecione quem vai assistir'); return; }
+  if(!window._itDevice) { showToast('Selecione o dispositivo'); return; }
+  var inicio = document.getElementById('it-inicio').value;
+  if(!inicio) { showToast('Informe o horário'); return; }
+
+  window.ST.telaAberta = window.ST.telaAberta || [];
+  var sessaoId = Date.now();
+
+  if(window._itChild === 'ambos') {
+    // Cria sessão compartilhada com ambos iniciando juntos
+    window.ST.telaAberta.push({
+      id: sessaoId, device: window._itDevice, quem: window._itQuem,
+      lucas: { inicio, fim: null },
+      clara: { inicio, fim: null }
+    });
+  } else {
+    // Verifica se há sessão aberta no mesmo device para adicionar
+    var sessaoExistente = window.ST.telaAberta.find(function(s){
+      return s.device===window._itDevice && !s[window._itChild===undefined?'x':window._itChild]?.fim===false;
+    });
+    window.ST.telaAberta.push({
+      id: sessaoId, device: window._itDevice, quem: window._itQuem,
+      lucas: window._itChild==='lucas' ? { inicio, fim: null } : null,
+      clara: window._itChild==='clara' ? { inicio, fim: null } : null
+    });
+  }
+
+  window.saveState().then(function(){
+    showToast('▶ Sessão iniciada!');
+    fecharModal('modal-iniciar-tela');
+    renderAlertasGlobais();
+    renderSessoesAbertas();
+  });
+}
+
+function incluirChildNaSessao(sessaoId, child) {
+  var s = (window.ST.telaAberta||[]).find(function(x){return x.id===sessaoId;});
+  if(!s) return;
+  var inicio = localISOStringNow();
+  s[child] = { inicio, fim: null };
+  window.saveState().then(function(){
+    showToast('▶ '+( child==='lucas'?'Lucas':'Clara')+' incluído na sessão!');
+    renderAlertasGlobais();
+    renderSessoesAbertas();
+  });
+}
+
+function abrirModalEncerrar(sessaoId, child) {
+  window._etAtividade = null;
+  document.getElementById('encerrar-sessao-id').value = sessaoId;
+  document.getElementById('encerrar-child').value = child;
+  var s = (window.ST.telaAberta||[]).find(function(x){return x.id===sessaoId;});
+  var nome = child==='lucas'?'Lucas':'Clara';
+  document.getElementById('encerrar-tela-title').textContent = '⏹ Encerrar — '+nome+(s?' · '+s.device:'');
+  document.getElementById('et-fim').value = localISOStringNow();
+  document.getElementById('et-obs').value = '';
+  document.querySelectorAll('#et-atividades .tela-pill').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('et-outro-campo').style.display = 'none';
+  document.getElementById('modal-encerrar-tela').classList.add('open');
+}
+
+function selectETAtividade(a, el) {
+  window._etAtividade = window._etAtividade===a?null:a;
+  document.querySelectorAll('#et-atividades .tela-pill').forEach(function(b){b.classList.remove('on');});
+  if(window._etAtividade) el.classList.add('on');
+  document.getElementById('et-outro-campo').style.display = window._etAtividade==='Outro'?'block':'none';
+}
+
+function confirmarEncerrarTela() {
+  var sessaoId = Number(document.getElementById('encerrar-sessao-id').value);
+  var child    = document.getElementById('encerrar-child').value;
+  var fim      = document.getElementById('et-fim').value;
+  var obs      = document.getElementById('et-obs').value.trim();
+  var atv      = window._etAtividade;
+  if(atv==='Outro'){
+    var outroVal = document.getElementById('et-outro').value.trim();
+    atv = outroVal || 'Outro';
+  }
+  if(!fim) { showToast('Informe o horário de fim'); return; }
+  if(!atv) { showToast('Selecione a atividade'); return; }
+
+  var s = (window.ST.telaAberta||[]).find(function(x){return x.id===sessaoId;});
+  if(!s || !s[child]) return;
+
+  s[child].fim = fim;
+
+  // Calcular duração em minutos
+  var durMin = Math.round((new Date(fim)-new Date(s[child].inicio))/60000);
+
+  // Salvar no array de tela da criança
+  window.ST[child].tela = window.ST[child].tela || [];
+  window.ST[child].tela.unshift({
+    id: Date.now(),
+    inicio: s[child].inicio,
+    fim,
+    device: s.device,
+    atividade: atv,
+    duracaoMin: durMin,
+    quem: s.quem,
+    obs,
+    sessaoId,
+    registradoPor: window._userName || null
+  });
+
+  // Se ambos encerraram, remove da lista de abertas
+  var lucasFechado = !s.lucas || s.lucas.fim;
+  var claraFechado = !s.clara || s.clara.fim;
+  if(lucasFechado && claraFechado) {
+    window.ST.telaAberta = (window.ST.telaAberta||[]).filter(function(x){return x.id!==sessaoId;});
+  }
+
+  window.saveState().then(function(){
+    showToast('⏹ Sessão encerrada!');
+    fecharModal('modal-encerrar-tela');
+    renderAlertasGlobais();
+    renderSessoesAbertas();
+    renderTela();
+  });
+}
+
+function renderSessoesAbertas() {
+  var el = document.getElementById('tela-sessoes-abertas');
+  if(!el) return;
+  var sessoes = window.ST.telaAberta || [];
+  if(!sessoes.length) { el.innerHTML=''; return; }
+  var html = '';
+  sessoes.forEach(function(s) {
+    var deviceEmoji = s.device==='TV'?'📺':s.device==='Tablet'?'📲':'📱';
+    html += '<div class="card" style="border:2px solid #D97706;margin-bottom:8px;">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">';
+    html += '<div style="font-size:14px;font-weight:600;">'+deviceEmoji+' '+s.device+' em andamento</div>';
+    html += '<span style="font-size:11px;color:#92400E;background:#FEF3C7;padding:2px 8px;border-radius:12px;">AO VIVO</span>';
+    html += '</div>';
+
+    // Lucas
+    if(s.lucas) {
+      var lInicio = new Date(s.lucas.inicio);
+      var lDur = Math.round((new Date()-lInicio)/60000);
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-top:1px solid var(--border);">';
+      html += '<div><span class="badge badge-lucas">👦 Lucas</span><span style="font-size:12px;color:var(--muted);margin-left:8px;">desde '+lInicio.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+' · '+lDur+'min</span></div>';
+      html += '<button class="alert-btn" style="background:#1A6B9A;color:#fff;" data-sid="'+s.id+'" data-child="lucas" onclick="encerrarTelaAlertBtn(this)">⏹ Encerrar</button>';
+      html += '</div>';
+    } else {
+      html += '<div style="padding:6px 0;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">';
+      html += '<span style="font-size:12px;color:var(--muted);">👦 Lucas — não está assistindo</span>';
+      html += '<button class="alert-btn" style="background:#1A6B9A;color:#fff;" data-sid="'+s.id+'" data-child="lucas" onclick="incluirTelaBtn(this)">+ Incluir</button>';
+      html += '</div>';
+    }
+
+    // Clara
+    if(s.clara) {
+      var cInicio = new Date(s.clara.inicio);
+      var cDur = Math.round((new Date()-cInicio)/60000);
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-top:1px solid var(--border);">';
+      html += '<div><span class="badge badge-clara">👧 Clara</span><span style="font-size:12px;color:var(--muted);margin-left:8px;">desde '+cInicio.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})+' · '+cDur+'min</span></div>';
+      html += '<button class="alert-btn" style="background:#6B3FA0;color:#fff;" data-sid="'+s.id+'" data-child="clara" onclick="encerrarTelaAlertBtn(this)">⏹ Encerrar</button>';
+      html += '</div>';
+    } else {
+      html += '<div style="padding:6px 0;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">';
+      html += '<span style="font-size:12px;color:var(--muted);">👧 Clara — não está assistindo</span>';
+      html += '<button class="alert-btn" style="background:#6B3FA0;color:#fff;" data-sid="'+s.id+'" data-child="clara" onclick="incluirTelaBtn(this)">+ Incluir</button>';
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+  el.innerHTML = html;
+}
 
 function selectTelaChild(child) {
   window._telaChild = child;
@@ -3127,6 +3421,15 @@ function deletarTelaBtn(el) {
   var child = el.getAttribute('data-child');
   var id = Number(el.getAttribute('data-id'));
   deletarTela(child, id);
+}
+function encerrarTelaAlertBtn(el) {
+  abrirModalEncerrar(Number(el.getAttribute('data-sid')), el.getAttribute('data-child'));
+}
+function incluirTelaBtn(el) {
+  incluirChildNaSessao(Number(el.getAttribute('data-sid')), el.getAttribute('data-child'));
+}
+function encerrarDoencaAlertBtn(el) {
+  editarDoenca(el.getAttribute('data-child'), Number(el.getAttribute('data-id')));
 }
 function editarSonoHist(el) {
   editarSono(el.getAttribute('data-child'), Number(el.getAttribute('data-id')));
